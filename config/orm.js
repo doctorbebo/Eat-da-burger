@@ -5,23 +5,47 @@ const orm =
 {
     all: (tableInput, cb) =>
     {
-        let qString = `SELECT * FROM ${tableInput}`;
-        callQuery(qString, (results)=>
+        logTable(tableInput,(results)=>
         {
-            console.log(`\n within all function ${results}`);
-
             cb(results);
+        })
+    },
+
+    update: (tableInput, id, devouredState, callBack)=>
+    {
+        let qString = `UPDATE ${tableInput} SET devoured = ${devouredState} WHERE id = ${id}`;
+        callQuery(qString, ()=>
+        {
+            qString = `SELECT * FROM ${tableInput} WHERE id = ${id}`;
+            callQuery(qString, (results)=>
+            {
+                callBack(`burger id: ${id} updated devour state to \n ${results[0].devoured}`);
+
+            });
         });
     },
 
-    update: ()=>
+    delete: (tableInput, id, cb)=>
     {
-        throw "orm update not implemented";
+        let qString = `DELETE FROM ${tableInput} WHERE id = ${id}`;
+        callQuery(qString, (results)=>
+        {
+            cb(results);
+            logTable(tableInput,(results)=>
+            {
+                console.log(results);
+            });
+        }) 
     },
 
-    delete: ()=>
+    create: (tableInput, burgerName, devouredState, cb)=>
     {
-        throw "orm delete not implemented";
+       // let qString = `INSERT INTO ${tableInput} (name, devoured) VALUES (${burgerName}, ${devouredState});`;
+       let qString = `INSERT INTO ${tableInput} (name, devoured) VALUES ('${burgerName}', ${devouredState});`
+        callQuery(qString, (results)=>
+            {
+                    cb (results)
+            });
     }
 }
 
@@ -31,9 +55,18 @@ function callQuery(queryString, cb)
     {
         if(err) throw err;
 
-        console.log(`\n within callQuery function \n ${results}`);
         cb(results);
     });
 };
+
+function logTable(table ,cb)
+{
+    connection.query(`SELECT * FROM ${table};`, (err, results)=>
+    {
+        if (err) throw err;
+
+        cb(results);
+    })
+}
 
 module.exports = orm;

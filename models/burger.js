@@ -1,26 +1,36 @@
 const orm = require("../config/orm.js");
 
-orm.all('burgers', (results)=>
-{
-    console.log(results);
-    // results.forEach(element => {
-    //     console.log(element.id);
-    // });
-});
 
+const burger = 
+{ 
+    all:(cb)=>
+    {
+        orm.all('burgers', (results)=>
+        {
+            cb(results);
+        });
+    },
+    update: (id, devouredState, cb)=>
+    {
+        orm.update('burgers', id, devouredState, (results)=>
+        {
+            cb(results);
+        });
+    },
+    create: (name, devouredState, cb)=>
+    {       
+        orm.create('burgers', name, devouredState, (results)=>
+        {
+            cb(results);
+        });
+    },
+    delete: (id, cb)=>
+    {       
+        orm.delete('burgers', id, (results)=>
+        {
+            cb(results);
+        });
+    }
+}
 
-// orm.update('burgers', 3, true, (results)=>
-// {
-//     console.log(results);
-// });
-
-
-// orm.create('burgers', 'leaf burger', false, (results)=>
-// {
-//     console.log(results);
-// });
-
-// orm.delete('burgers', 4, (results)=>
-// {
-//     console.log(results + results + results);
-// })
+module.exports = burger;

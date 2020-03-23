@@ -7,18 +7,49 @@ router.get('/', (req, res)=>
 {
     burger.all((results)=>
     {
-        res.send(results);
-    })
+        let burgers =
+        {
+            readyToEat: [],
+            devoured: []
+        }
+        results.forEach(burger => {
+            console.log(burger.devoured);
+            if(burger.devoured === 0)
+            {
+                burgers.readyToEat.push(burger);
+            }else
+            {
+                burgers.devoured.push(burger);
+            }
+        });
+
+        console.log(burgers);
+        res.render("burger", burgers);        
+    });
 });
 
-router.put('/', (req, res)=>
+router.get('/burger', (req, res)=>
 {
-
+    burger.all((results)=>
+    {
+        res.send(results);        
+    });
 });
 
-router.post('/', (req, res)=>
+router.put('/api/burger/:id', (req, res)=>
 {
+    burger.update(req.params.id, req.body.state,()=>
+    {
+        res.send("burger updated");
+    });
+});
 
+router.post('/api/new/burger/:name', (req, res)=>
+{
+    burger.create(req.params.name, false, ()=>
+    {
+        res.send("burger created");
+    });
 });
 
 router.delete('/', (req, res)=>
@@ -26,4 +57,4 @@ router.delete('/', (req, res)=>
 
 });
 
-
+module.exports = router;

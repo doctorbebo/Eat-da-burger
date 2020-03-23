@@ -25,6 +25,10 @@ $(".devour-btn").on('click', (obj)=>
 $(".create-btn").on('click', (obj)=>
 {
     burgerName = obj.target.previousElementSibling.previousElementSibling.value;
+    if(burgerName == '')
+    {
+        return;
+    }
     $.ajax("/api/new/burger/" + burgerName, {
         type: "POST"
       }).then(
@@ -34,5 +38,25 @@ $(".create-btn").on('click', (obj)=>
           location.reload();
         }
       );
+});
 
+$(document).keypress((obj)=>
+{
+    if(obj.target.name == 'burgername' && obj.key === "Enter")
+    {
+        burgerName = obj.target.value;
+        if(burgerName == '')
+        {
+            return;
+        }
+        $.ajax("/api/new/burger/" + burgerName, {
+            type: "POST"
+          }).then(
+            function() {
+              console.log(`${burgerName} created`);
+              // Reload the page to get the updated list
+              location.reload();
+            }
+          );
+    }
 });
